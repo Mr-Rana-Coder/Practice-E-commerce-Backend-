@@ -1,0 +1,29 @@
+{
+  "name": "ecommerce",
+  "version": "1.0.0",
+  "description": "This is a backend of a e commerece website",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon -r dotenv/config --experimental-json-modules src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mr-Rana-Coder/Practice-E-commerce-Backend-.git"
+  },
+  "author": "Sahil Rana",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mr-Rana-Coder/Practice-E-commerce-Backend-/issues"
+  },
+  "homepage": "https://github.com/Mr-Rana-Coder/Practice-E-commerce-Backend-#readme",
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.9.5",
+    "nodemon": "^3.1.9"
+  }
+}
