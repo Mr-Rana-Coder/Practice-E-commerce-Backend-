@@ -45,6 +45,9 @@ const productSchema = new mongoose.Schema(
                 message: "At least one image is required"
             }
         },
+        imagesPublicId: {
+            type: [String]
+        },
         review: [{
             type: Schema.Types.ObjectId,
             ref: "Review"

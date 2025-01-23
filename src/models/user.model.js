@@ -23,6 +23,14 @@ const userSchema = new mongoose.Schema({
     avatar: {
         type: String,
     },
+    avatarPublicId: {
+        type: String,
+    },
+    role: {
+        type: String,
+        default: "User",
+        enum: ["User", "Admin", "SuperAdmin"]
+    },
     phoneNumber: {
         type: String,
         required: true
@@ -51,7 +59,8 @@ userSchema.methods.generateAccessToken = () => {
         {
             _id: this._id,
             email: this.email,
-            fullName: this.fullName
+            fullName: this.fullName,
+            role: this.role
         },
         process.env.ACCESS_TOKEN_SECRET_KEY,
         {
