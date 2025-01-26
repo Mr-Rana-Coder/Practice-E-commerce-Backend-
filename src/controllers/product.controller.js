@@ -6,7 +6,7 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const productListing = asyncHandler(async (req, res) => {
 
-    const { categoryId } = req.parmas;
+    const { categoryId } = req.params;
     const { name, description, price, stock, brand } = req.body;
 
     if ([name, description, price, brand].some((field) => field?.trim === "")) {
@@ -55,7 +55,7 @@ const productListing = asyncHandler(async (req, res) => {
 })
 
 const getProductById = asyncHandler(async (req, res) => {
-    const { productId } = req.parmas;
+    const { productId } = req.params;
     if (!productId) {
         throw new ApiError(400, "Product id is required")
     }
@@ -70,7 +70,7 @@ const getProductById = asyncHandler(async (req, res) => {
 })
 
 const updateListedProduct = asyncHandler(async (req, res) => {
-    const { productId } = req.parmas;
+    const { productId } = req.params;
     if (!productId) {
         throw new ApiError(400, "Product id is required")
     }
@@ -102,8 +102,8 @@ const updateListedProduct = asyncHandler(async (req, res) => {
 })
 
 const changeProductCategory = asyncHandler(async (req, res) => {
-    const { categoryId } = req.parmas;
-    const { productId } = req.parmas;
+    const { categoryId } = req.params;
+    const { productId } = req.params;
     if (!categoryId || !productId) {
         throw new ApiError(400, "Category id and product id both are required");
     }
@@ -160,7 +160,7 @@ const updateProductImages = asyncHandler(async (req, res) => {
 })
 
 const deleteProduct = asyncHandler(async (req, res) => {
-    const {productId} = req.parmas;
+    const {productId} = req.params;
     if(!productId){
         throw new ApiError(400,"product id is required")
     }
