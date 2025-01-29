@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import asyncHandler from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
-import { Category } from "../models/category.model.js";
 import { ApiResponse } from "../utils/apiResponse";
+import { Category } from "../models/category.model.js";
 
 const createCategory = asyncHandler(async (req, res) => {
     const { name, description } = req.body;
