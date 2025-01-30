@@ -6,9 +6,17 @@ const paymentSchema = new mongoose.Schema({
         ref: "User",
         required: true
     },
-    orderId: {
+    productOrderId: {
         type: Schema.Types.ObjectId,
         ref: "Order",
+        required: true
+    },
+    razorpayOrderId: {
+        type: String,
+        required: true
+    },
+    razorpayPaymentId: {
+        type: String,
         required: true
     },
     //Paymentmethod,payment Status and Transcation Id fields can be change as required
@@ -20,7 +28,7 @@ const paymentSchema = new mongoose.Schema({
     paymentStatus: {
         type: String,
         required: true,
-        enum: ["Successfull", "Pending", "Failed", "Refunded"]
+        enum: ["Created" , "Authorized" , "Captured" , "Refunded" , "Failed"]
     },
     transactionId: {
         type: String,

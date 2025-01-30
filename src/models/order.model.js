@@ -11,6 +11,10 @@ const orderSchema = new mongoose.Schema({
         ref: "Product",
         required: true
     }],
+    quantity: {
+        type: Number,
+        default: 1
+    },
     totalPrice: {
         type: Number,
         required: true,
@@ -22,14 +26,20 @@ const orderSchema = new mongoose.Schema({
         }
     },
     paymentStatus: {
-        type: Schema.Types.ObjectId,
-        ref: "Payment",
-        required: true,
+        type: String,
+        required: true
     },
     deliveryStatus: {
+        type: String,
+        required: true
+    },
+    paymentDeatils: {
+        type: Schema.Types.ObjectId,
+        ref: "Payment",
+    },
+    deliveryDetails: {
         type: Schema.Types.ObjectId,
         ref: "Shipping",
-        required: true
     },
     address: {
         type: Schema.Types.ObjectId,
