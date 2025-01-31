@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import asyncHandler from "../utils/asyncHandler.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
-import { ApiResponse } from "../utils/apiResponse";
+import { ApiResponse } from "../utils/apiResponse.js";
 import { Category } from "../models/category.model.js";
 
 const createCategory = asyncHandler(async (req, res) => {
@@ -93,7 +93,7 @@ const updateCategory = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, updatedCategory, "Category updated successfully"))
 })
 
-const deleteCategory = asyncHandler(async (res, res) => {
+const deleteCategory = asyncHandler(async (req, res) => {
     const { categoryId } = req.params;
     if (!categoryId) {
         throw new ApiError(400, "Category id is required")

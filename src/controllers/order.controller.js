@@ -4,7 +4,7 @@ import { ApiResponse } from "../utils/apiResponse.js";
 import mongoose from "mongoose";
 import { Order } from "../models/order.model.js";
 import { Product } from "../models/product.model.js";
-import { createRazorPayOrder } from "../config/razorpay.congfig.js";
+import { createRazorpayOrder } from "../config/razorpay.config.js";
 import { Cart } from "../models/cart.model.js";
 
 const createOrderForSingleProduct = asyncHandler(async (req, res) => {
@@ -52,7 +52,7 @@ const createOrderForSingleProduct = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Unable to create your order")
     }
 
-    const createOrderForPayment = await createRazorPayOrder(totalPrice);
+    const createOrderForPayment = await createRazorpayOrder(totalPrice);
     if (!createOrderForPayment) {
         throw new ApiError(400, "Unable to get payment details")
     }
@@ -104,7 +104,7 @@ const createOrderForCart = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Unable to create your order")
     }
 
-    const createOrderForPayment = await createRazorPayOrder(totalPrice);
+    const createOrderForPayment = await createRazorpayOrder(totalPrice);
     if (!createOrderForPayment) {
         throw new ApiError(400, "Unable to get payment details")
     }

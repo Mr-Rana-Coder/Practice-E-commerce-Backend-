@@ -1,5 +1,4 @@
 import Razorpay from "razorpay";
-import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
 
 const razorpayInstance = new Razorpay({

@@ -6,7 +6,7 @@ const paymentSchema = new mongoose.Schema({
         ref: "User",
         required: true
     },
-    productOrderId: {
+    userOrderId: {
         type: Schema.Types.ObjectId,
         ref: "Order",
         required: true
@@ -28,7 +28,7 @@ const paymentSchema = new mongoose.Schema({
     paymentStatus: {
         type: String,
         required: true,
-        enum: ["Created" , "Authorized" , "Captured" , "Refunded" , "Failed"]
+        enum: ["Created", "Authorized", "Captured", "Refunded", "Failed"]
     },
     transactionId: {
         type: String,

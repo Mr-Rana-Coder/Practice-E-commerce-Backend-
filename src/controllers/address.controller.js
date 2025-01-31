@@ -5,9 +5,9 @@ import { ApiResponse } from "../utils/apiResponse.js";
 import { Address } from "../models/address.model.js";
 
 const addAddress = asyncHandler(async (req, res) => {
-    const { houseNumber, area, landmark, city, pincode, state } = req.body;
+    const { houseNumber, area, landmark, city, pincode, state, mobileNumber } = req.body;
 
-    if ([houseNumber, area, landmark, city, pincode, state].some((field) => field?.trim() === "")) {
+    if ([houseNumber, area, landmark, city, pincode, state, mobileNumber].some((field) => field?.trim() === "")) {
         throw new ApiError(400, "All field are required")
     };
 
@@ -18,6 +18,7 @@ const addAddress = asyncHandler(async (req, res) => {
     const address = await Address.create({
         owner: userId,
         houseNumber: houseNumber,
+        mobileNumber: mobileNumber,
         area: area,
         landmark: landmark,
         city: city,
@@ -44,7 +45,7 @@ const updateAddress = asyncHandler(async (req, res) => {
     }
 
     const { houseNumber, area, landmark, city, pincode, state } = req.body;
-    const allowedFields = { houseNumber, area, landmark, city, pincode, state };
+    const allowedFields = { houseNumber, area, landmark, city, pincode, state, mobileNumber };
     const changes = {};
     Object.keys(allowedFields).forEach(key => {
         if (allowedFields[key] !== undefined) {

@@ -10,7 +10,8 @@ connectDb()
     .then(() => {
         app.listen(process.env.PORT || 8000, () => {
             console.log(`The server is running successfully on ${process.env.PORT}`)
-        })})
-        .catch((err) => {
-            console.log("There is a problem while connecting the server ", err);
         })
+    })
+    .catch((err) => {
+        console.log("There is a problem while connecting the server ", err);
+    })

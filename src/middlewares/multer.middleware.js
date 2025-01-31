@@ -1,6 +1,6 @@
 import multer from "multer";
-import fs from "fs";
 import { fileURLToPath } from "url";
+import path from "path";
 
 //This will find the current directoy in es module.
 const _filename = fileURLToPath(import.meta.url);

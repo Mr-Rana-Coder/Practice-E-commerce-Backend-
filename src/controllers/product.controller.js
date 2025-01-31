@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
-import Product from "../models/product.model.js";
+import { Product } from "../models/product.model.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js"
+import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const productListing = asyncHandler(async (req, res) => {
@@ -102,8 +103,7 @@ const updateListedProduct = asyncHandler(async (req, res) => {
 })
 
 const changeProductCategory = asyncHandler(async (req, res) => {
-    const { categoryId } = req.params;
-    const { productId } = req.params;
+    const { categoryId, productId } = req.params;
     if (!categoryId || !productId) {
         throw new ApiError(400, "Category id and product id both are required");
     }
@@ -160,22 +160,22 @@ const updateProductImages = asyncHandler(async (req, res) => {
 })
 
 const deleteProduct = asyncHandler(async (req, res) => {
-    const {productId} = req.params;
-    if(!productId){
-        throw new ApiError(400,"product id is required")
+    const { productId } = req.params;
+    if (!productId) {
+        throw new ApiError(400, "product id is required")
     }
-    if(!mongoose.isValidObjectId(productId)){
-        throw new ApiError(400,"product id is invalid")
+    if (!mongoose.isValidObjectId(productId)) {
+        throw new ApiError(400, "product id is invalid")
     }
     const deletedProduct = await findByIdAndDelete(productId);
 
-    if(!deletedProduct){
-        throw new ApiError(400,"product is not deleted successfully or product not found")
+    if (!deletedProduct) {
+        throw new ApiError(400, "product is not deleted successfully or product not found")
     }
 
     return res
-    .status(200)
-    .json(new ApiResponse(200,{},"Product deleted Successfully"))
+        .status(200)
+        .json(new ApiResponse(200, {}, "Product deleted Successfully"))
 })
 
 const getProducts = asyncHandler(async (req, res) => {
@@ -227,7 +227,7 @@ const getProducts = asyncHandler(async (req, res) => {
         {
             $addFields: {
                 averageRating: {
-                    $ifNull: [{ $avg: '$reviews.rating' }, 0] 
+                    $ifNull: [{ $avg: '$reviews.rating' }, 0]
                 }
             }
         },
@@ -261,4 +261,4 @@ const getProducts = asyncHandler(async (req, res) => {
         }))
 })
 
-export { productListing,getProductById,getProducts,deleteProduct,changeProductCategory,updateListedProduct,updateProductImages }
+export { productListing, getProductById, getProducts, deleteProduct, changeProductCategory, updateListedProduct, updateProductImages }

@@ -215,44 +215,44 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 
 })
 
-const updateAccountAvatar = asyncHandler(async(req,res)=>{
+const updateAccountAvatar = asyncHandler(async (req, res) => {
     const avatarPath = req.file?.path
-    if(!avatarPath){
-        throw new ApiError(400,"Avatar path is required")
+    if (!avatarPath) {
+        throw new ApiError(400, "Avatar path is required")
     }
     const avatar = await uploadOnCloudinary(avatarPath);
 
-    if(!avatar){
-        throw new ApiError(400,"Unable to upload the file on the sever")
+    if (!avatar) {
+        throw new ApiError(400, "Unable to upload the file on the sever")
     }
     const userId = req.user?._id;
-    if(!userId){
-        throw new ApiError(401,"User is not authenticated")
+    if (!userId) {
+        throw new ApiError(401, "User is not authenticated")
     }
 
-    const updatedUser = await User.findByIdAndUpdate(userId,{avatar:avatar.url,avatarPublicId:avatar.public_id},{new:true});
-    if(!updatedUser){
-        throw new ApiError(400,"Unable to update the avatar")
+    const updatedUser = await User.findByIdAndUpdate(userId, { avatar: avatar.url, avatarPublicId: avatar.public_id }, { new: true });
+    if (!updatedUser) {
+        throw new ApiError(400, "Unable to update the avatar")
     }
 
     return res
-    .status(200)
-    .json(new ApiResponse(200,updatedUser,"Avatar updated successfully"))
+        .status(200)
+        .json(new ApiResponse(200, updatedUser, "Avatar updated successfully"))
 })
 
-//Need to complete later
-const updateUserRole = asyncHandler(async(req,res)=>{
+//I'll complete it later
+const updateUserRole = asyncHandler(async (req, res) => {
     const userId = req.user?._id;
-    if(!userId){
-        throw new ApiError(401,"user not authenticated")
+    if (!userId) {
+        throw new ApiError(401, "user not authenticated")
     }
 })
 
-const userProfile = asyncHandler(async(req,res)=>{
+const userProfile = asyncHandler(async (req, res) => {
     const userId = req.user?._id;
-    if(!userId){
-        throw new ApiError(401,"User is not authenticated")
+    if (!userId) {
+        throw new ApiError(401, "User is not authenticated")
     }
 })
 
-export { registerUser, loginUser, getCurrentUser, logoutUser, updatePasword, refreshAccessToken,updateAccountDetails,updateAccountAvatar }
+export { registerUser, loginUser, getCurrentUser, logoutUser, updatePasword, refreshAccessToken, updateAccountDetails, updateAccountAvatar }

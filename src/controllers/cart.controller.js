@@ -17,8 +17,8 @@ const createCart = asyncHandler(async (req, res) => {
         }
 
         const product = await Product.findById(productId);
-        if(!product){
-            throw new ApiError(404,"Product not found with the give Product id")
+        if (!product) {
+            throw new ApiError(404, "Product not found with the give Product id")
         }
         const cart = await Cart.findOne({
             owner: userId
@@ -147,43 +147,43 @@ const removeAllSameProductFromCart = asyncHandler(async (req, res) => {
 
     const cart = await Cart.findOneAndUpdate({
         owner: userId
-    },{
-        $pull:{
-            products:productId
+    }, {
+        $pull: {
+            products: productId
         }
-    },{
-        new:true
+    }, {
+        new: true
     })
 
-    if(!cart){
-        throw new ApiError(404,"Cart not found")
+    if (!cart) {
+        throw new ApiError(404, "Cart not found")
     }
 
     return res
-    .status(200)
-    .json(new ApiResponse(200,cart,"Product removed successfully"))
+        .status(200)
+        .json(new ApiResponse(200, cart, "Product removed successfully"))
 })
 
-const deleteCart = asyncHandler(async(req,res)=>{
+const deleteCart = asyncHandler(async (req, res) => {
     const userId = req.user?._id;
     if (!userId) {
         throw new ApiError(401, "User is not authenticated")
     }
 
     const cart = await Cart.findOneAndDelete({
-        owner:userId
+        owner: userId
     })
 
-    if(!cart){
-        throw new ApiError(404,"Cart not found")
+    if (!cart) {
+        throw new ApiError(404, "Cart not found")
     }
 
     return res
-    .status(200)
-    .json(new ApiResponse(200,{},"Cart deleted successfully"))
+        .status(200)
+        .json(new ApiResponse(200, {}, "Cart deleted successfully"))
 });
 
-export{
+export {
     createCart,
     removeAllSameProductFromCart,
     addProductToCart,
