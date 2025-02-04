@@ -21,7 +21,7 @@ const jwtVerify = asyncHandler(async (req, res, next) => {
         if (!user) {
             throw new ApiError(404, "User doesn't exist")
         }
-        req.User = user;
+        req.user = user;
         next();
 
     } catch (err) {

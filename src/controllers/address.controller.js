@@ -44,7 +44,7 @@ const updateAddress = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Address id is invalid")
     }
 
-    const { houseNumber, area, landmark, city, pincode, state } = req.body;
+    const { houseNumber, area, landmark, city, pincode, state, mobileNumber } = req.body;
     const allowedFields = { houseNumber, area, landmark, city, pincode, state, mobileNumber };
     const changes = {};
     Object.keys(allowedFields).forEach(key => {

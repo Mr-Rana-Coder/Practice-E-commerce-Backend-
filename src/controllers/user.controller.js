@@ -4,6 +4,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
 const generateAccessAndRefreshToken = async (userId) => {
 
@@ -72,19 +73,20 @@ const loginUser = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Email and password required")
     }
 
-    const user = User.findOne({ email: email });
+    const user = await User.findOne({ email: email });
     if (!user) {
         throw new ApiError(404, "User doesn't exist,Please register")
     }
 
-    const isPassValid = user.isPasswordCorrect(password);
+    const isPassValid = await user.isPasswordCorrect(password);
+
     if (!isPassValid) {
         throw new ApiError(401, "Password is wrong,Please enter correct password")
     }
 
-    const { accessToken, refreshToken } = generateAccessAndRefreshToken(user._id);
+    const { accessToken, refreshToken } = await generateAccessAndRefreshToken(user._id);
 
-    const loggedInUser = await User.findById(user._id).select("-password -refreshToken -avatarPublicId");
+    const loggedInUser = await User.findById(user._id).select("-password -refreshToken -avatarPublicId -phoneNumber");
 
     const options = {
         httpOnly: true,
@@ -96,7 +98,9 @@ const loginUser = asyncHandler(async (req, res) => {
         .cookie("accessToken", accessToken, options)
         .cookie("refreshToken", refreshToken, options)
         .json(new ApiResponse(200, {
-            user: accessToken, refreshToken, loggedInUser
+            user: loggedInUser,
+            accessToken: accessToken,
+            refreshToken: refreshToken
         }
             , "user logged in successfully"))
 
@@ -119,8 +123,8 @@ const logoutUser = asyncHandler(async (req, res) => {
     }
     return res
         .status(200)
-        .clearCookie(accessToken, options)
-        .clearCookie(refreshToken, options)
+        .clearCookie("accessToken", options)
+        .clearCookie("refreshToken", options)
         .json(new ApiResponse(200, {}, "User logged out successfully"))
 })
 
@@ -131,7 +135,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 });
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
-    const incomingRefreshToken = req.cookie.refreshToken || req.body.refreshToken;
+    const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
     if (!incomingRefreshToken) {
         throw new ApiError(400, "Refresh token is not recieved!")
     }
@@ -139,7 +143,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     if (!decode) {
         throw new ApiError(400, "Invalid Refresh token")
     }
-    const user = await User.findById(decode?._id);
+    const user = await User.findById(decode?._id).select("-avatarPublicId -phoneNumber -password -avatar");
     if (!user) {
         throw new ApiError(404, "User doesn't exist or invalid refresh token")
     }
@@ -163,7 +167,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
 const updatePasword = asyncHandler(async (req, res) => {
     const { oldPassword, newPassword } = req.body;
-    if (!password || !oldPassword) {
+    if (!newPassword || !oldPassword) {
         throw new ApiError(400, "Old and new password is required")
     }
 
@@ -195,7 +199,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
         changes.fullName = fullName;
     }
     if (phoneNumber) {
-        changes.fullName = fullName;
+        changes.phoneNumber = phoneNumber;
     }
     if (!fullName && !phoneNumber) {
         throw new ApiError(400, "At least 1 field is required for the update")
@@ -204,7 +208,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     if (!userId) {
         throw new ApiError("User is not authenticated")
     }
-    const updatedUser = await User.findByIdAndUpdate(userId, changes, { new: true });
+    const updatedUser = await User.findByIdAndUpdate(userId, changes, { new: true }).select("-avatarPublicId -phoneNumber -password -avatar");
     if (!updatedUser) {
         throw new ApiError(400, "unable to update the details");
     }
@@ -230,7 +234,7 @@ const updateAccountAvatar = asyncHandler(async (req, res) => {
         throw new ApiError(401, "User is not authenticated")
     }
 
-    const updatedUser = await User.findByIdAndUpdate(userId, { avatar: avatar.url, avatarPublicId: avatar.public_id }, { new: true });
+    const updatedUser = await User.findByIdAndUpdate(userId, { avatar: avatar.url, avatarPublicId: avatar.public_id }, { new: true }).select("-avatarPublicId -phoneNumber -password -avatar");
     if (!updatedUser) {
         throw new ApiError(400, "Unable to update the avatar")
     }
@@ -240,19 +244,29 @@ const updateAccountAvatar = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, updatedUser, "Avatar updated successfully"))
 })
 
-//I'll complete it later
 const updateUserRole = asyncHandler(async (req, res) => {
-    const userId = req.user?._id;
+    const { userId } = req.params;
     if (!userId) {
-        throw new ApiError(401, "user not authenticated")
+        throw new ApiError(400, "User id is required")
     }
+    if (!mongoose.isValidObjectId(userId)) {
+        throw new ApiError(400, "User id is invalid")
+    }
+
+    const updateRole = await User.findByIdAndUpdate(userId, {
+        role: "Admin"
+    }, { new: true })
+
+    if (!updateUserRole) {
+        throw new ApiError(404, "User with the given id not found")
+    }
+    return res
+        .status(200)
+        .json(new ApiResponse(200, updateRole, "User role update successfully"))
 })
 
-const userProfile = asyncHandler(async (req, res) => {
-    const userId = req.user?._id;
-    if (!userId) {
-        throw new ApiError(401, "User is not authenticated")
-    }
-})
-
-export { registerUser, loginUser, getCurrentUser, logoutUser, updatePasword, refreshAccessToken, updateAccountDetails, updateAccountAvatar }
+export {
+    registerUser, loginUser, getCurrentUser, logoutUser,
+    updatePasword, refreshAccessToken, updateAccountDetails,
+    updateAccountAvatar, updateUserRole
+}

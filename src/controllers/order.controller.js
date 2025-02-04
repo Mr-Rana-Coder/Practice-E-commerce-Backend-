@@ -28,24 +28,23 @@ const createOrderForSingleProduct = asyncHandler(async (req, res) => {
         throw new ApiError(404, "Product with the given id not found")
     }
 
-    if (!quantity <= 0) {
+    if (quantity <= 0) {
         throw new ApiError(400, "Quantity cannot be negative")
     }
 
     const totalPrice = product.price * quantity;
 
-    if (!totalPrice <= 0) {
+    if (totalPrice <= 0) {
         throw new ApiError(400, "Total price cannot be negative")
     }
-
+    console.log(totalPrice)
     const order = await Order.create({
         buyer: userId,
         products: [productId],
         quantity: quantity,
         totalPrice: totalPrice,
         address: addressId,
-        paymentStatus: "Pending",
-        deliveryStatus: "Pending"
+        paymentStatus: "Pending"
     })
 
     if (!order) {
@@ -98,7 +97,6 @@ const createOrderForCart = asyncHandler(async (req, res) => {
         totalPrice: totalPrice,
         address: addressId,
         paymentStatus: "Pending",
-        deliveryStatus: "Pending"
     })
     if (!order) {
         throw new ApiError(400, "Unable to create your order")

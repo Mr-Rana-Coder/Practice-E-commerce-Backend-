@@ -29,17 +29,9 @@ const orderSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    deliveryStatus: {
-        type: String,
-        required: true
-    },
     paymentDeatils: {
         type: Schema.Types.ObjectId,
         ref: "Payment",
-    },
-    deliveryDetails: {
-        type: Schema.Types.ObjectId,
-        ref: "Shipping",
     },
     address: {
         type: Schema.Types.ObjectId,

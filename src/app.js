@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { errorHandler } from "./middlewares/errorHandler.middleware.js";
 
 const app = express();
 
@@ -24,7 +25,9 @@ import { router as orderRouter } from "./routes/order.route.js";
 import { router as categoryRouter } from "./routes/category.route.js";
 import { router as cartRouter } from "./routes/cart.route.js";
 import { router as addressRouter } from "./routes/address.route.js";
+import { router as healthCheckRouter } from "./routes/healthCheck.route.js";
 
+app.use("/api/v1/healthCheck", healthCheckRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/wishlist", wishlistRouter);
 app.use("/api/v1/review", reviewRouter);
@@ -34,5 +37,7 @@ app.use("/api/v1/order", orderRouter);
 app.use("/api/v1/category", categoryRouter);
 app.use("/api/v1/cart", cartRouter);
 app.use("/api/v1/address", addressRouter);
+
+app.use(errorHandler);
 
 export { app }

@@ -1,6 +1,7 @@
 import { connectDb } from "./db/index.js";
 import { app } from "./app.js";
 import dotenv from "dotenv";
+import { ApiError } from "./utils/apiError.js";
 
 dotenv.config({
     path: "./env"
@@ -13,5 +14,6 @@ connectDb()
         })
     })
     .catch((err) => {
-        console.log("There is a problem while connecting the server ", err);
+        console.error("There is a problem while connecting the server ", err);
+        throw new ApiError(500, "Unable to connect to Database")
     })

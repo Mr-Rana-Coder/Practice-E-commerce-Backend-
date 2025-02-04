@@ -9,10 +9,13 @@ const createCategory = asyncHandler(async (req, res) => {
     if (!name || !description) {
         throw new ApiError(400, "Both fields are required")
     }
-    const category = await Category.create({ name: name, description: description });
-    if (!category) {
-        throw new ApiError(400, "Unable to create category")
+    const isCategoryAvailable = await Category.findOne({
+        name: name
+    })
+    if (isCategoryAvailable) {
+        throw new ApiError(400, "Category with the given name already exists")
     }
+    const category = await Category.create({ name: name, description: description });
 
     return res
         .status(201)
@@ -30,7 +33,12 @@ const getAllCategories = asyncHandler(async (req, res) => {
         limit: parseInt(limit, 10)
     }
 
-    const allCategories = await Category.aggregatePaginate({}, options);
+
+    const allCategories = await Category.aggregatePaginate([
+        {
+            $match: {}
+        }
+    ], options);
 
     if (!allCategories.totalPages === 0) {
         throw new ApiError(404, "No page found ")

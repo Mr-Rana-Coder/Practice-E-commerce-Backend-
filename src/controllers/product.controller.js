@@ -4,14 +4,30 @@ import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js"
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { Category } from "../models/category.model.js";
 
 const productListing = asyncHandler(async (req, res) => {
 
     const { categoryId } = req.params;
     const { name, description, price, stock, brand } = req.body;
-
-    if ([name, description, price, brand].some((field) => field?.trim === "")) {
+    if (!categoryId) {
+        throw new ApiError(400, "Category id is required")
+    }
+    if (!mongoose.isValidObjectId(categoryId)) {
+        throw new ApiError(400, "Category id is invalid")
+    }
+    const category = await Category.findById(categoryId);
+    if (!category) {
+        throw new ApiError(404, "Category with the give id doesn't exist")
+    }
+    if ([name, description, price, brand].some((field) => field?.trim() === "")) {
         throw new ApiError(400, "All fields are required")
+    }
+
+    const adminId = req.user?._id;
+
+    if (!adminId) {
+        throw new ApiError(401, "Admin is not authenticated")
     }
 
     const productImagesPath = req.files.map(file => file.path);
@@ -28,12 +44,6 @@ const productListing = asyncHandler(async (req, res) => {
         imagesPublicIdFromCloudinary.push(uploadProductImagesOnCloudinary.public_id);
     }
 
-    const adminId = req.user?._id;
-
-    if (!adminId) {
-        throw new ApiError(401, "Admin is not authenticated")
-    }
-
     const listProduct = await Product.create({
         seller: adminId,
         name: name,
@@ -46,13 +56,14 @@ const productListing = asyncHandler(async (req, res) => {
         category: categoryId
     })
 
-    if (!listProduct) {
+    const product = await Product.findById(listProduct._id).populate("category").select("seller name description price stock brand images category");
+    if (!product) {
         throw new ApiError(400, "Unable to list the product")
     }
 
     return res
         .status(201)
-        .json(new ApiResponse(201, listProduct, "Product listed successfully"))
+        .json(new ApiResponse(201, product, "Product listed successfully"))
 })
 
 const getProductById = asyncHandler(async (req, res) => {
@@ -60,7 +71,10 @@ const getProductById = asyncHandler(async (req, res) => {
     if (!productId) {
         throw new ApiError(400, "Product id is required")
     }
-    const getProduct = await Product.findById(productId);
+    if (!mongoose.isValidObjectId(productId)) {
+        throw new ApiError(400, "Product id is invalid")
+    }
+    const getProduct = await Product.findById(productId).select("-imagesPublicId -review");
     if (!getProduct) {
         throw new ApiError(404, "Product doesn't exist")
     }
@@ -79,9 +93,7 @@ const updateListedProduct = asyncHandler(async (req, res) => {
         throw new ApiError(400, "product id is invalid")
     }
 
-    const { name, description, price, stock, brand } = req.body;
-
-    const allowedFields = [name, description, price, stock, brand];
+    const allowedFields = ['name', 'description', 'price', 'stock', 'brand'];
     const updateChanges = {};
     allowedFields.forEach((field) => {
         if (req.body[field] !== undefined) {
@@ -92,7 +104,7 @@ const updateListedProduct = asyncHandler(async (req, res) => {
         throw new ApiError(400, "At least 1 field is required")
     }
 
-    const updateProduct = await Product.findByIdAndUpdate(productId, updateChanges, { new: true });
+    const updateProduct = await Product.findByIdAndUpdate(productId, updateChanges, { new: true }).populate("category").select("seller name description price stock brand images category");
     if (!updateProduct) {
         throw new ApiError(400, "Unable to update the product")
     }
@@ -110,7 +122,7 @@ const changeProductCategory = asyncHandler(async (req, res) => {
     if (!mongoose.isValidObjectId(categoryId) || !mongoose.isValidObjectId(productId)) {
         throw new ApiError(400, "Either category id or product id is invalid")
     }
-    const updateCategory = await Product.findByIdAndUpdate(productId, { category: categoryId }, { new: true });
+    const updateCategory = await Product.findByIdAndUpdate(productId, { category: categoryId }, { new: true }).populate("category").select("seller name description price stock brand images category");
     if (!updateCategory) {
         throw new ApiError(400, "Unable to update the category")
     }
@@ -167,7 +179,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
     if (!mongoose.isValidObjectId(productId)) {
         throw new ApiError(400, "product id is invalid")
     }
-    const deletedProduct = await findByIdAndDelete(productId);
+    const deletedProduct = await Product.findByIdAndDelete(productId);
 
     if (!deletedProduct) {
         throw new ApiError(400, "product is not deleted successfully or product not found")
@@ -239,6 +251,18 @@ const getProducts = asyncHandler(async (req, res) => {
         },
         {
             $limit: limit
+        }, {
+            $project: {
+                name: 1,
+                seller: 1,
+                description: 1,
+                price: 1,
+                stock: 1,
+                category: 1,
+                brand: 1,
+                images: 1,
+                review: 1
+            }
         }
     ])
 
@@ -252,7 +276,7 @@ const getProducts = asyncHandler(async (req, res) => {
         .status(200)
         .json(new ApiResponse(200, {
             products,
-            paginetion: {
+            pagination: {
                 currentPage: page,
                 totalPages: Math.ceil(totalProducts / limit),
                 totalProducts,

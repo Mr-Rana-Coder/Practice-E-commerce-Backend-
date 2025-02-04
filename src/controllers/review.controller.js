@@ -3,6 +3,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiError.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import mongoose from "mongoose";
+import { Product } from "../models/product.model.js";
 
 const createReview = asyncHandler(async (req, res) => {
     const { rating, comment } = req.body;
@@ -22,19 +23,22 @@ const createReview = asyncHandler(async (req, res) => {
     }
 
     const review = await Review.create({
-        onwer: userId,
-        product: productId,
+        owner: userId,
         rating: rating,
         comment: comment
     })
-
-    if (!review) {
-        throw new ApiError(400, "review not created succesfully")
+    const product = await Product.findByIdAndUpdate(productId, {
+        review: review._id
+    }, {
+        new: true
+    }).select("-imagesPublicId")
+    if (!product) {
+        throw new ApiError(400, "product not found with the given product id")
     }
 
     return res
         .status(201)
-        .json(new ApiResponse)(201, review, "Review created successfully")
+        .json(new ApiResponse(201, { review, product }, "Review created successfully"))
 })
 
 const updateReview = asyncHandler(async (req, res) => {
@@ -56,15 +60,31 @@ const updateReview = asyncHandler(async (req, res) => {
     if (!mongoose.isValidObjectId(reviewId)) {
         throw new ApiError(400, "Review id is invalid")
     }
-    const review = await Review.findByIdAndUpdate(reviewId, changes, { new: true });
+    const { productId } = req.params;
+    if (!productId) {
+        throw new ApiError(400, "Product id is required")
+    }
+    if (!mongoose.isValidObjectId(productId)) {
+        throw new ApiError(400, "Product id is invalid")
+    }
+    const review = await Review.findByIdAndUpdate(reviewId, changes, { new: true }).select("-imagesPublicId");
 
     if (!review) {
         throw new ApiError(404, "Review for the given id doesn't exist")
     }
 
+    const product = await Product.findByIdAndUpdate(productId, {
+        review: review._id
+    }, {
+        new: true
+    })
+    if (!product) {
+        throw new ApiError(400, "product not found with the given product id")
+    }
+
     return res
         .status(200)
-        .json(new ApiResponse(200, review, "Review updated successfully"))
+        .json(new ApiResponse(200, { product, review }, "Review updated successfully"))
 })
 
 const getReviewByReviewId = asyncHandler(async (req, res) => {

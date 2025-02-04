@@ -14,7 +14,7 @@ const createWishlist = asyncHandler(async (req, res) => {
         if (!mongoose.isValidObjectId(productId)) {
             throw new ApiError(400, "Product id is invalid")
         }
-        const wishlist = await Wishlist.findOne({
+        let wishlist = await Wishlist.findOne({
             owner: userId
         })
 
@@ -25,15 +25,20 @@ const createWishlist = asyncHandler(async (req, res) => {
             wishlist = await Wishlist.create({
                 owner: userId,
                 products: [productId]
-            })
+            }).populate("products")
         }
         await wishlist.save();
-        if (!wishlist) {
+        const wishlistResponse = await Wishlist.findById(wishlist._id).populate({
+            path: "products",
+            select: "-imagesPublicId"
+        });
+
+        if (!wishlistResponse) {
             throw new ApiError(400, "Unable to create a wishlist with the product")
         }
         return res
             .status(201)
-            .json(new ApiResponse(201, wishlist, "Wishlist created successfully with the prodcut"))
+            .json(new ApiResponse(201, wishlistResponse, "Wishlist created successfully with the prodcut"))
     }
 
     const wishlistWithoutProduct = await Wishlist.create({
@@ -53,11 +58,11 @@ const addProductToWishlist = asyncHandler(async (req, res) => {
     if (!userId) {
         throw new ApiError(401, "User is not authenticated")
     }
-    const { prodcutId } = req.params;
-    if (!prodcutId) {
+    const { productId } = req.params;
+    if (!productId) {
         throw new ApiError(400, "Prodcut id is required")
     }
-    if (!mongoose.isValidObjectId(prodcutId)) {
+    if (!mongoose.isValidObjectId(productId)) {
         throw new ApiError(400, "Product id is invalid")
     }
 
@@ -65,11 +70,14 @@ const addProductToWishlist = asyncHandler(async (req, res) => {
         owner: userId
     }, {
         $push: {
-            products: prodcutId
+            products: productId
         }
     }, {
         new: true
-    })
+    }).populate({
+        path: "products",
+        select: "-imagesPublicId"
+    });
 
     if (!addProduct) {
         throw new ApiError(404, "Wishlist with the user id is not found")
@@ -105,31 +113,29 @@ const removeProductFromWishlist = asyncHandler(async (req, res) => {
         throw new ApiError(401, "User is not authenticated")
     }
 
-    const { productId } = req.params;
-    if (!productId) {
-        throw new ApiError(400, "Product id is required")
+    const { productId, wishlistId } = req.params;
+    if (!productId || !wishlistId) {
+        throw new ApiError(400, "Product id and wishlist id both are required")
     }
-    if (!mongoose.isValidObjectId(productId)) {
+    if (!mongoose.isValidObjectId(productId) || !mongoose.isValidObjectId(wishlistId)) {
         throw new ApiError(400, "Product is is invalid")
     }
-
-    const updatedWishlist = await Wishlist.findOneAndUpdate({
-        owner: userId
-    }, {
-        $pull: {
-            products: productId
-        }
-    }, {
-        new: true
-    })
-
-    if (!updatedWishlist) {
-        throw new ApiError(404, "Wishlist doesn't exist")
+    const wishlist = await Wishlist.findById(wishlistId);
+    if (!wishlist) {
+        throw new ApiError(404, "Wishlist with the given id doesn't exist")
     }
+
+    const productIndex = wishlist.products.findIndex(p => p.toString() === productId);
+    if (productIndex === -1) {
+        throw new ApiError(404, "Product not found in the wishlist")
+    }
+
+    wishlist.products.splice(productIndex, 1);
+    await wishlist.save();
 
     return res
         .status(200)
-        .json(new ApiResponse(200, updatedWishlist, "Product removed successfully"))
+        .json(new ApiResponse(200, wishlist, "Product removed successfully"))
 
 })
 

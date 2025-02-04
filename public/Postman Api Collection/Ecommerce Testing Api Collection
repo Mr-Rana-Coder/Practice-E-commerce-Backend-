@@ -1,0 +1,701 @@
+{
+	"info": {
+		"_postman_id": "2784bd8f-1c29-4f9a-b489-a0c174f13157",
+		"name": "Ecommerce Backend Testing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "40604068"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{server}}/healthCheck/"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "fullName",
+									"value": "Sahil Rana",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "ranasatish297@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "Rana@2002",
+									"type": "text"
+								},
+								{
+									"key": "phoneNumber",
+									"value": "7011175630",
+									"type": "text"
+								},
+								{
+									"key": "role",
+									"value": "Admin",
+									"type": "text"
+								},
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "/C:/Users/ranas/Downloads/fitness-logo-design-vector-23742357.jpg"
+								}
+							]
+						},
+						"url": "{{server}}/users/register"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"ranasatish297@gmail.com\",\r\n    \"password\":\"Sahil@2002\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{server}}/users/login"
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NzlkY2Q5NGFjYjkyNDQxZmI5NTc3YWQiLCJpYXQiOjE3MzgzOTcwMjAsImV4cCI6MTczOTI2MTAyMH0.w-3QW0tqL_kL89zgJa1eV87HBxakqnMyipXUbMgNVL0",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": "{{server}}/users/refresh-token"
+					},
+					"response": []
+				},
+				{
+					"name": "Current User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{server}}/users/current-user"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Password",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"oldPassword\":\"Rana@2002\",\r\n    \"newPassword\":\"Sahil@2002\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{server}}/users/update-password"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Account Details",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"phoneNumber\":\"1234567890\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{server}}/users/update-account-details"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Avatar",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "/C:/Users/ranas/Downloads/pngtree-gym-gymnasium-body-building-exercise-training-fitness-workout-png-image_4503753.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{server}}/users/update-account-avatar",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"users",
+								"update-account-avatar"
+							],
+							"query": [
+								{
+									"key": "avatar",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "{{server}}/users/logout"
+					},
+					"response": []
+				},
+				{
+					"name": "Change User role",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": "{{server}}/users/change-user-role/679dce7eacb92441fb9577b1"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Wishlist",
+			"item": [
+				{
+					"name": "Create Wishlist",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "{{server}}/wishlist/create-wishlist/679f2f5c1820bbce9ee9e426"
+					},
+					"response": []
+				},
+				{
+					"name": "Add Product",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": "{{server}}/wishlist/add-product-wishlist/679f2f0f1820bbce9ee9e41f"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Wishlist Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{server}}/wishlist/67a06ba6d6e8258bde5e10c1/679f2f0f1820bbce9ee9e41f"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Product From wishlist",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": "{{server}}/wishlist/67a06ba6d6e8258bde5e10c1/679f2f0f1820bbce9ee9e41f"
+					},
+					"response": []
+				},
+				{
+					"name": "Get wishlist",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{server}}/wishlist/67a06ba6d6e8258bde5e10c1/679f2f0f1820bbce9ee9e41f"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Review",
+			"item": [
+				{
+					"name": "Create Review",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"comment\":\"Noice\",\r\n    \"rating\":\"3\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{server}}/review/create-review/679f2ad7e2d0c7588075b782"
+					},
+					"response": []
+				},
+				{
+					"name": "User Review",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{server}}/review/user-review"
+					},
+					"response": []
+				},
+				{
+					"name": "Get review By id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{server}}/review/679f2ad7e2d0c7588075b782/679f6d0c87ea665b9c44955c"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Review",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"rating\":\"4\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{server}}/review/679f2ad7e2d0c7588075b782/679f6d0c87ea665b9c44955c"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Review",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "{{server}}/review/679f2ad7e2d0c7588075b782/679f6d0c87ea665b9c44955c"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "List Product",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "productImages",
+									"type": "file",
+									"src": [
+										"/C:/Users/ranas/Downloads/laptop/pexels-isabella-mendes-107313-7822114.jpg",
+										"/C:/Users/ranas/Downloads/laptop/pexels-anna-nekrashevich-8532944.jpg",
+										"/C:/Users/ranas/Downloads/laptop/pexels-doouglasma-14666032.jpg",
+										"/C:/Users/ranas/Downloads/laptop/pexels-karolina-grabowska-6032794.jpg",
+										"/C:/Users/ranas/Downloads/laptop/pexels-morthy-jameson-108384720-9577225.jpg"
+									]
+								},
+								{
+									"key": "name",
+									"value": "latpop",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "It types good",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "100000",
+									"type": "text"
+								},
+								{
+									"key": "stock",
+									"value": "50",
+									"type": "text"
+								},
+								{
+									"key": "brand",
+									"value": "Apple",
+									"type": "text"
+								}
+							]
+						},
+						"url": "{{server}}/product/product-listing/679f1e82b789e325439a0c1f"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{server}}/product/get-product/679f2fb51820bbce9ee9e42d"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{server}}/product/get-all-products"
+					},
+					"response": []
+				},
+				{
+					"name": "Update product Images",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "productImages",
+									"type": "file",
+									"src": []
+								}
+							]
+						},
+						"url": "{{server}}/product/update-product-images/679f2dd61820bbce9ee9e418"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Sony Camera\",\r\n    \"stock\":\"30\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{server}}/product/update-product/679f2dd61820bbce9ee9e418"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Category product",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": "{{server}}/product/change-product-category/679f2dd61820bbce9ee9e418/679f1f723bec054159ad666b"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "{{server}}/product/delete-product/679f2dd61820bbce9ee9e418"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Payment",
+			"item": [
+				{
+					"name": "Payment Verification",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"signature\": \"26d44b80b5469847ca63ed3ea7cad442630a55d040e0cc77c2a36ab1f064f380\",\r\n    \"razorpayOrderId\": \"order_PrB9akYQZNGt31\",\r\n    \"razorpayPaymentId\": \"payment_Abc123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{server}}/payment/verify-payment/67a1c6565b54a0357e5a939a"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cart",
+			"item": [
+				{
+					"name": "Create Cart",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "{{server}}/cart/create-cart/679f2ad7e2d0c7588075b782"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove all same product",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": "{{server}}/cart/remove-same-products/679f2ad7e2d0c7588075b782"
+					},
+					"response": []
+				},
+				{
+					"name": "Remove single product",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": "{{server}}/cart/679f2ad7e2d0c7588075b782"
+					},
+					"response": []
+				},
+				{
+					"name": "Add product to cart",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": "{{server}}/cart/add-product/679f2ad7e2d0c7588075b782"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Cart",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "{{server}}/cart/679f2ad7e2d0c7588075b782"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cart",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{server}}/cart//get-cart"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Order",
+			"item": [
+				{
+					"name": "Create single order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"quantity\":\"1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{server}}/order/create-single-order/679f2fb51820bbce9ee9e42d/679f66a1b426c8b34539fef4"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Cart Order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": "{{server}}/order/create-cart-order/67a07e660b91b1bcb62a64ef/679f66a1b426c8b34539fef4"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Address",
+			"item": [
+				{
+					"name": "Add Address",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"houseNumber\": \"Rzf-2/166 Flat no t10\",\r\n    \"area\": \"Vijay enclave\",\r\n    \"landmark\": \"Gym\",\r\n    \"city\": \"Palam Vhar\",\r\n    \"pincode\": \"110075\",\r\n    \"state\": \"Delhi\",\r\n    \"mobileNumber\": \"9941292929\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{server}}/address/add-address"
+					},
+					"response": []
+				},
+				{
+					"name": "All user address",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{server}}/address/all-user-address"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Address",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"state\":\"Haryana\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{server}}/address/679f67e07d15fc43dcbaea53"
+					},
+					"response": []
+				},
+				{
+					"name": "Get address",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{server}}/address/679f67e07d15fc43dcbaea53"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Address",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "{{server}}/address/679f67e07d15fc43dcbaea53"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Category",
+			"item": [
+				{
+					"name": "Create Cateogry",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Luxury\",\r\n    \"description\":\"Luxury Goods and Items\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{server}}/category/create-category"
+					},
+					"response": []
+				},
+				{
+					"name": "All Categories",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{server}}/category/all-categories"
+					},
+					"response": []
+				},
+				{
+					"name": "Get category By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{server}}/category/679f1f723bec054159ad666b"
+					},
+					"response": []
+				},
+				{
+					"name": "update Category",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Imported Goods\",\r\n    \"description\":\"Imported goods from outer country\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{server}}/category/679f1f2f6441f5e77101117d"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Category",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "{{server}}/category/679f1f2f6441f5e77101117d"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

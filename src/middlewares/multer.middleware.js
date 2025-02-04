@@ -2,7 +2,6 @@ import multer from "multer";
 import { fileURLToPath } from "url";
 import path from "path";
 
-//This will find the current directoy in es module.
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = path.dirname(_filename);
 

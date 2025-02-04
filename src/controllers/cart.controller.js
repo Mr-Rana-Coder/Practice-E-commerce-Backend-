@@ -17,10 +17,11 @@ const createCart = asyncHandler(async (req, res) => {
         }
 
         const product = await Product.findById(productId);
+
         if (!product) {
             throw new ApiError(404, "Product not found with the give Product id")
         }
-        const cart = await Cart.findOne({
+        let cart = await Cart.findOne({
             owner: userId
         })
 
@@ -131,38 +132,66 @@ const removeProductFromCart = asyncHandler(async (req, res) => {
 const removeAllSameProductFromCart = asyncHandler(async (req, res) => {
     const userId = req.user?._id;
     const { productId } = req.params;
+
     if (!userId) {
         throw new ApiError(401, "User is not authenticated")
     }
+
     if (!productId) {
-        throw new ApiError(400, "Prodcut id is required")
+        throw new ApiError(400, "Product id is required")
     }
+
     if (!mongoose.isValidObjectId(productId)) {
         throw new ApiError(400, "Product id is invalid")
     }
+
     const product = await Product.findById(productId);
     if (!product) {
         throw new ApiError(404, "Product not found")
     }
 
-    const cart = await Cart.findOneAndUpdate({
+    const cart = await Cart.findOne({
         owner: userId
-    }, {
-        $pull: {
-            products: productId
-        }
-    }, {
-        new: true
-    })
+    });
 
     if (!cart) {
-        throw new ApiError(404, "Cart not found")
+        throw new ApiError(404, "Cart with the given owner doesn't exist")
     }
 
-    return res
-        .status(200)
-        .json(new ApiResponse(200, cart, "Product removed successfully"))
-})
+    // Find all instances of the product in the cart
+    const productIndexArray = cart.products.filter(productIdInCart => productIdInCart.toString() === productId.toString());
+
+    if (productIndexArray.length > 0) {
+        const productDetails = await Product.findById(productId);
+
+        if (productDetails) {
+            // Calculate the total price reduction based on the number of occurrences of the product
+            const priceToRemove = productDetails.price * productIndexArray.length;
+
+            // Remove the product(s) from the cart by filtering it out
+            cart.products = cart.products.filter(productIdInCart => productIdInCart.toString() !== productId.toString());
+
+            // Update the total price of the cart
+            cart.totalPrice -= priceToRemove;
+
+            // Ensure the totalPrice is not negative
+            if (cart.totalPrice < 0) {
+                cart.totalPrice = 0;
+            }
+
+            // Save the updated cart
+            await cart.save();
+
+            return res.status(200).json(
+                new ApiResponse(200, cart, "Product(s) removed from cart successfully")
+            );
+        } else {
+            throw new ApiError(404, "Product not found in the Product collection");
+        }
+    } else {
+        throw new ApiError(404, "Product not found in the cart");
+    }
+});
 
 const deleteCart = asyncHandler(async (req, res) => {
     const userId = req.user?._id;
@@ -183,10 +212,28 @@ const deleteCart = asyncHandler(async (req, res) => {
         .json(new ApiResponse(200, {}, "Cart deleted successfully"))
 });
 
+const getCart = asyncHandler(async (req, res) => {
+    const userId = req.user?._id;
+    if (!userId) {
+        throw new ApiError(401, "User not authorized")
+    }
+    const cart = await Cart.findOne({
+        owner: userId
+    })
+    if (!cart) {
+        throw new ApiError(404, "Cart not found")
+    }
+
+    return res
+        .status(200)
+        .json(new ApiResponse(200, cart, "Cart fetched successfully"))
+})
+
 export {
     createCart,
     removeAllSameProductFromCart,
     addProductToCart,
     removeProductFromCart,
-    deleteCart
+    deleteCart,
+    getCart
 }

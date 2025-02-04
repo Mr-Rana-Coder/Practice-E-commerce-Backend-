@@ -5,7 +5,7 @@ import { verifyPayment } from "../controllers/payment.controller.js";
 const router = express.Router();
 router.use(jwtVerify);
 
-router.route("/verify-payment/:userOrderId/:addressId").post(verifyPayment);
+router.route("/verify-payment/:userOrderId").post(verifyPayment);
 
 export {
     router

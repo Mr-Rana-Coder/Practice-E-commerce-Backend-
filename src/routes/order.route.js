@@ -9,7 +9,7 @@ const router = express.Router();
 router.use(jwtVerify);
 
 router.route("/create-single-order/:productId/:addressId").post(createOrderForSingleProduct);
-router.route("/create-single-order/:cartId/:addressId").post(createOrderForCart);
+router.route("/create-cart-order/:cartId/:addressId").post(createOrderForCart);
 
 export {
     router
